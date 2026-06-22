@@ -6,7 +6,7 @@
 // completes (including the loop). Speed is reported in scene units/second; the
 // HUD converts it to a km/h-style readout.
 export class CoasterPhysics {
-  constructor({ trackLength, gravity = 26, drag = 0.02, minSpeed = 6, maxSpeed = 70 }) {
+  constructor({ trackLength, gravity = 28, drag = 0.018, minSpeed = 6, maxSpeed = 82 }) {
     this.trackLength = trackLength
     this.gravity = gravity
     this.drag = drag
@@ -19,8 +19,8 @@ export class CoasterPhysics {
     // The lift hill region (as a fraction of the track) where the chain pulls
     // the train upward at a steady pace.
     this.liftStart = 0.02
-    this.liftEnd = 0.16
-    this.liftSpeed = 11
+    this.liftEnd = 0.19
+    this.liftSpeed = 13
   }
 
   get u() {

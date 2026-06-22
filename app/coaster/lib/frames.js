@@ -29,6 +29,20 @@ export function buildTrackFrames(curve, count = 1400) {
 
   const maxBank = THREE.MathUtils.degToRad(55)
 
+  // computeFrenetFrames seeds its initial normal from whichever axis is most
+  // perpendicular to the first tangent, so the whole transported frame can be
+  // rolled by an arbitrary amount (this is what made the view appear rotated
+  // 90deg). Re-align it: roll every frame by a constant angle so the start
+  // normal points to the sky. A constant roll preserves the closed continuity.
+  const worldUp = new THREE.Vector3(0, 1, 0)
+  const T0 = frenet.tangents[0]
+  let desiredUp = worldUp.clone().addScaledVector(T0, -worldUp.dot(T0))
+  if (desiredUp.lengthSq() < 1e-6) desiredUp.set(0, 0, 1).addScaledVector(T0, -T0.z)
+  desiredUp.normalize()
+  const N0 = frenet.normals[0]
+  let align = Math.acos(THREE.MathUtils.clamp(N0.dot(desiredUp), -1, 1))
+  if (new THREE.Vector3().crossVectors(N0, desiredUp).dot(T0) < 0) align = -align
+
   for (let i = 0; i <= count; i++) {
     const t = i / count
     const pos = curve.getPointAt(t)
@@ -49,11 +63,10 @@ export function buildTrackFrames(curve, count = 1400) {
     const flatness = 1 - verticality
     let bank = THREE.MathUtils.clamp(dPsi * 14, -maxBank, maxBank) * flatness
 
-    if (Math.abs(bank) > 1e-4) {
-      const q = new THREE.Quaternion().setFromAxisAngle(tangent, bank)
-      normal.applyQuaternion(q)
-      binormal.applyQuaternion(q)
-    }
+    // Constant alignment roll + per-sample banking, both about the tangent.
+    const q = new THREE.Quaternion().setFromAxisAngle(tangent, align + bank)
+    normal.applyQuaternion(q)
+    binormal.applyQuaternion(q)
 
     positions.push(pos)
     tangents.push(tangent.normalize())

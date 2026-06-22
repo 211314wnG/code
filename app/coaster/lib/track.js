@@ -1,59 +1,75 @@
 import * as THREE from 'three'
 
-// Control points (x = east, y = up, z = north), in metres. The path is a closed
-// circuit: station -> lift hill -> first drop -> vertical loop -> banked turns
-// -> camelback hills -> banked return to the station.
+// Control points (x = east, y = up, z = north), in metres. The path is a long
+// closed circuit: station -> tall lift hill -> steep first drop -> big vertical
+// loop -> high banked turn -> descending helix -> airtime camelbacks -> a second
+// (smaller) loop -> banked return to the station.
 //
-// The vertical loop lives in the y/z plane: the train enters at the bottom
-// moving +z, climbs the front, goes over the top moving -z, comes down the back
-// and exits the bottom slightly ahead, continuing +z.
+// Vertical loops live in the y/z plane: the train enters at the bottom moving
+// +z, climbs the front, goes over the top moving -z, comes down the back and
+// exits the bottom slightly ahead, continuing +z.
 const CONTROL_POINTS = [
   // Station (lowest, flat)
-  [0, 6, 0],
-  [0, 6, 14],
+  [0, 7, 0],
+  [0, 7, 18],
 
-  // Chain lift hill climbing to the highest point
-  [0, 12, 30],
-  [0, 24, 48],
-  [0, 38, 66],
-  [0, 46, 82], // crest
+  // Tall chain lift hill climbing to the highest point (~74 m)
+  [0, 16, 42],
+  [0, 32, 64],
+  [0, 50, 84],
+  [0, 66, 102],
+  [0, 74, 118], // crest
 
-  // First big drop
-  [0, 40, 92],
-  [0, 20, 104],
-  [0, 6, 116],
+  // Steep, near-vertical first drop
+  [0, 68, 130],
+  [0, 42, 140],
+  [0, 16, 148],
+  [0, 6, 158],
 
-  // --- Vertical loop (centre ~ y=24, z=140, radius 18) ---
-  [0, 6, 130], // approach, low
-  [0, 6, 139], // bottom entry (+z)
-  [0, 24, 158], // front, rising (+y)
-  [0, 42, 140], // top (-z)
-  [0, 24, 122], // back, descending (-y)
-  [0, 6, 141], // bottom exit, slightly ahead (+z)
-  [0, 8, 152], // pull out
+  // --- Vertical loop #1 (centre ~ y=32, z=184, radius 26) ---
+  [0, 6, 170], // bottom entry (+z)
+  [0, 32, 210], // front, rising (+y)
+  [0, 58, 184], // top (-z)
+  [0, 32, 158], // back, descending (-y)
+  [0, 7, 186], // bottom exit, slightly ahead (+z)
+  [0, 13, 202], // pull out
 
-  // Rising into a banked right turn that sweeps east
-  [6, 16, 170],
-  [26, 18, 182],
-  [48, 18, 178],
-  [62, 16, 160],
+  // Rising into a high, fast banked right turn sweeping east
+  [16, 26, 220],
+  [48, 34, 232],
+  [82, 34, 224],
+  [104, 28, 196],
 
-  // Camelback hills heading back west
-  [66, 22, 138],
-  [60, 12, 116],
-  [48, 20, 96],
-  [36, 10, 78],
+  // Descending helix (a corkscrewing spiral down to the west)
+  [108, 22, 166],
+  [92, 16, 146],
+  [64, 14, 152],
+  [56, 18, 180],
+  [78, 14, 198],
+  [98, 10, 178],
 
-  // Banked left turn rounding back toward the station
-  [22, 12, 60],
-  [4, 10, 44],
-  [-14, 9, 34],
-  [-20, 8, 20],
+  // Big airtime camelback hills heading back west
+  [86, 28, 150],
+  [66, 10, 128],
+  [44, 24, 106],
+  [24, 9, 86],
+
+  // --- Vertical loop #2 (smaller, centre ~ y=24, z=64, radius 17) ---
+  [8, 8, 74],
+  [8, 24, 92],
+  [8, 41, 74],
+  [8, 24, 56],
+  [8, 9, 75],
+
+  // Banked left turn rounding home
+  [-6, 12, 56],
+  [-22, 11, 40],
+  [-26, 9, 22],
+  [-18, 8, 6],
 
   // Final swoop back into the station
-  [-12, 7, 6],
-  [-4, 6, -4],
-  [0, 6, -6],
+  [-8, 7, -4],
+  [0, 7, -6],
 ]
 
 export function createTrackCurve() {

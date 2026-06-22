@@ -55,15 +55,15 @@ export function buildTrackMesh(curve, frames) {
 
   const railSegments = count
   const leftRail = new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(leftPts, true), railSegments, RAIL_RADIUS, 8, true),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(leftPts, true), railSegments, RAIL_RADIUS, 12, true),
     railMat,
   )
   const rightRail = new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rightPts, true), railSegments, RAIL_RADIUS, 8, true),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rightPts, true), railSegments, RAIL_RADIUS, 12, true),
     railMat,
   )
   const spine = new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(spinePts, true), railSegments, 0.28, 8, true),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(spinePts, true), railSegments, 0.28, 10, true),
     spineMat,
   )
   for (const m of [leftRail, rightRail, spine]) {

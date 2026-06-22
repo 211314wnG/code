@@ -9,6 +9,7 @@ import { buildScene } from './lib/scene.js'
 import { CoasterPhysics } from './lib/physics.js'
 import { RideCamera } from './lib/rideCamera.js'
 import { CoasterAudio } from './lib/audio.js'
+import { buildCar } from './lib/car.js'
 import HUD from './HUD.jsx'
 
 // Top-level client component. Owns the Three.js renderer, the animation loop and
@@ -44,7 +45,12 @@ export default function CoasterSimulator() {
     const trackMesh = buildTrackMesh(curve, frames)
     scene.add(trackMesh)
 
-    const camera = new THREE.PerspectiveCamera(72, mount.clientWidth / mount.clientHeight, 0.1, 2000)
+    const camera = new THREE.PerspectiveCamera(78, mount.clientWidth / mount.clientHeight, 0.1, 2000)
+
+    // Front car parented to the camera (rides in the rider's view).
+    const car = buildCar()
+    camera.add(car)
+    scene.add(camera)
 
     const bounds = getTrackBounds(curve)
     const trackLength = curve.getLength()
@@ -79,11 +85,20 @@ export default function CoasterSimulator() {
         physics.update(dt, tangent.y)
         rideCamera.update(camera, physics.u, 0.35)
 
-        // Speed feedback for HUD (km/h-ish) and audio.
-        const kmh = physics.speed * 3.6
-        speedRef.current = kmh
         const speed01 = (physics.speed - physics.minSpeed) / (physics.maxSpeed - physics.minSpeed)
         const onLift = physics.u > physics.liftStart && physics.u < physics.liftEnd
+
+        // High-speed camera shake for extra thrill (the parented car rides
+        // with the camera, so only the world appears to rattle).
+        const shake = speed01 * speed01 * 0.07
+        if (shake > 0.001) {
+          camera.position.x += (Math.random() - 0.5) * shake
+          camera.position.y += (Math.random() - 0.5) * shake
+          camera.position.z += (Math.random() - 0.5) * shake
+        }
+
+        // Speed feedback for HUD (km/h-ish) and audio.
+        speedRef.current = physics.speed * 3.6
         audio.update(speed01, onLift)
       }
 
