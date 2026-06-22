@@ -1,20 +1,27 @@
-export default function Home() {
-  return (
-    <main
+'use client'
+
+import dynamic from 'next/dynamic'
+
+// Three.js touches `window`, so the simulator is loaded client-side only.
+const CoasterSimulator = dynamic(() => import('./coaster/CoasterSimulator.jsx'), {
+  ssr: false,
+  loading: () => (
+    <div
       style={{
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
+        justifyContent: 'center',
+        height: '100vh',
+        background: '#0b1220',
+        color: '#eaf2ff',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       }}
     >
-      <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Hello, World!</h1>
-        <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>欢迎来到我的 GitHub Pages 页面</p>
-      </div>
-    </main>
-  )
+      Loading the coaster…
+    </div>
+  ),
+})
+
+export default function Home() {
+  return <CoasterSimulator />
 }
