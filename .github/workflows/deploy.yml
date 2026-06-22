@@ -28,15 +28,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      # Only publish the artifact for deployable refs (main).
+      # Publish the build artifact for any push (PRs only run the build as a check).
       - uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request'
         with:
           path: ./out
 
   deploy:
-    # Deploy only from main; other branches / PRs just run the build above as CI.
-    if: github.ref == 'refs/heads/main'
+    # Deploy on every push (main or the working branch); PRs just run the build.
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
