@@ -39,18 +39,21 @@ export class BotManager {
 
   spawn(n, spawns) {
     for (let i = 0; i < n; i++) {
-      const root = skeletonClone(this.template)
-      root.scale.setScalar(this.scale)
-      root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false } })
-      const mixer = new THREE.AnimationMixer(root)
-      const find = (re) => this.animations.find((a) => re.test(a.name))
-      const idleClip = find(/idle/i) || this.animations[0]
-      const runClip = find(/run/i) || find(/walk/i) || this.animations[0]
-      const actions = {
-        idle: mixer.clipAction(idleClip),
-        run: mixer.clipAction(runClip),
+      let root, mixer = null, actions = null
+      if (this.template) {
+        root = skeletonClone(this.template)
+        root.scale.setScalar(this.scale)
+        root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false } })
+        mixer = new THREE.AnimationMixer(root)
+        const find = (re) => this.animations.find((a) => re.test(a.name))
+        const idleClip = find(/idle/i) || this.animations[0]
+        const runClip = find(/run/i) || find(/walk/i) || this.animations[0]
+        actions = { idle: mixer.clipAction(idleClip), run: mixer.clipAction(runClip) }
+        actions.idle.play()
+      } else {
+        // Fallback enemy if the downloaded model isn't available.
+        root = buildBoxSoldier()
       }
-      actions.idle.play()
 
       const hit = new THREE.Mesh(
         new THREE.BoxGeometry(0.7, 1.8, 0.7),
@@ -79,7 +82,7 @@ export class BotManager {
   }
 
   _setAnim(bot, name) {
-    if (bot.current === name) return
+    if (!bot.actions || bot.current === name) return
     bot.actions[bot.current].fadeOut(0.2)
     bot.actions[name].reset().fadeIn(0.2).play()
     bot.current = name
@@ -121,7 +124,7 @@ export class BotManager {
     const eye = new THREE.Vector3()
     const peye = new THREE.Vector3(playerPos.x, playerPos.y, playerPos.z)
     for (const bot of this.bots) {
-      bot.mixer.update(dt)
+      if (bot.mixer) bot.mixer.update(dt)
       if (!bot.alive) {
         if (now >= bot.respawnAt) {
           bot.hp = 100; bot.alive = true; bot.root.visible = true
@@ -175,4 +178,29 @@ export class BotManager {
     for (const bot of this.bots) this.scene.remove(bot.root)
     this.bots = []; this.hitMeshes = []
   }
+}
+
+// A simple low-poly humanoid enemy used when the downloaded model is unavailable.
+function buildBoxSoldier() {
+  const g = new THREE.Group()
+  const fatigue = new THREE.MeshStandardMaterial({ color: 0x5d6b45, roughness: 0.9 })
+  const skin = new THREE.MeshStandardMaterial({ color: 0xc99a72, roughness: 0.8 })
+  const dark = new THREE.MeshStandardMaterial({ color: 0x2f342b, roughness: 0.8 })
+  const gun = new THREE.MeshStandardMaterial({ color: 0x222428, metalness: 0.5, roughness: 0.5 })
+  const add = (geo, mat, x, y, z) => {
+    const m = new THREE.Mesh(geo, mat)
+    m.position.set(x, y, z)
+    m.castShadow = true
+    g.add(m)
+    return m
+  }
+  add(new THREE.BoxGeometry(0.18, 0.75, 0.2), dark, -0.12, 0.375, 0) // legs
+  add(new THREE.BoxGeometry(0.18, 0.75, 0.2), dark, 0.12, 0.375, 0)
+  add(new THREE.BoxGeometry(0.5, 0.7, 0.28), fatigue, 0, 1.1, 0) // torso
+  add(new THREE.BoxGeometry(0.13, 0.6, 0.13), fatigue, -0.32, 1.12, 0) // arms
+  add(new THREE.BoxGeometry(0.13, 0.6, 0.13), fatigue, 0.32, 1.12, 0)
+  add(new THREE.BoxGeometry(0.26, 0.28, 0.26), skin, 0, 1.62, 0) // head
+  add(new THREE.BoxGeometry(0.3, 0.14, 0.32), dark, 0, 1.76, 0) // helmet
+  add(new THREE.BoxGeometry(0.08, 0.08, 0.55), gun, 0.18, 1.1, -0.22) // rifle
+  return g
 }

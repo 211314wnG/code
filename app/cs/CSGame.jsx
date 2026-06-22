@@ -20,7 +20,7 @@ export default function CSGame() {
   const apiRef = useRef({})
   const runningRef = useRef(false)
 
-  const [phase, setPhase] = useState('loading') // loading | ready | playing
+  const [phase, setPhase] = useState('ready') // ready | playing (start is never blocked)
   const [health, setHealth] = useState(100)
   const [ammo, setAmmo] = useState(MAG)
   const [kills, setKills] = useState(0)
@@ -57,11 +57,17 @@ export default function CSGame() {
     const bots = new BotManager(scene)
     bots.setSpawns(spawns)
     let botsReady = false
-    bots.load().then(() => {
-      bots.spawn(NUM_BOTS, spawns)
-      botsReady = true
-      setPhase('ready')
-    }).catch((e) => { console.error('model load failed', e); setPhase('ready') })
+    const startBots = () => { if (botsReady) return; bots.spawn(NUM_BOTS, spawns); botsReady = true }
+    // Load the real animated soldier in the background. If it fails or takes too
+    // long, fall back to built-in soldiers so enemies always appear and the game
+    // is never blocked.
+    const fallbackTimer = setTimeout(() => { bots.template = null; startBots() }, 9000)
+    bots.load()
+      .then(() => { clearTimeout(fallbackTimer); startBots() })
+      .catch((e) => {
+        console.error('soldier model load failed, using fallback', e)
+        clearTimeout(fallbackTimer); bots.template = null; startBots()
+      })
 
     // ---- gameplay state (refs for the loop) ----
     const st = { health: 100, ammo: MAG, kills: 0, reloading: false, lastFire: 0, dead: false, respawnAt: 0 }
