@@ -40,9 +40,9 @@ export default function MinecraftGame() {
 
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0x8ec9f0)
-    scene.fog = new THREE.Fog(0x8ec9f0, 60, 150)
+    scene.fog = new THREE.Fog(0x8ec9f0, 90, 230)
 
-    const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.05, 400)
+    const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.05, 600)
 
     // World mesh
     const world = new World()
@@ -154,25 +154,36 @@ export default function MinecraftGame() {
     const onAnyMouseDown = () => setTouchUI(false)
     window.addEventListener('mousedown', onAnyMouseDown)
 
-    // ---- Touch look (on empty canvas areas; HUD buttons handle their own) ----
-    let lookId = null, lastX = 0, lastY = 0
+    // ---- Touch look (on empty canvas areas; HUD buttons handle their own).
+    // A quick tap (little movement, short time) mines the targeted block. ----
+    let lookId = null, lastX = 0, lastY = 0, startT = 0, moved = 0
     const onTouchStart = (e) => {
       setTouchUI(true)
       const t = e.changedTouches[0]
-      if (lookId === null) { lookId = t.identifier; lastX = t.clientX; lastY = t.clientY }
+      if (lookId === null) {
+        lookId = t.identifier; lastX = t.clientX; lastY = t.clientY
+        startT = performance.now(); moved = 0
+      }
     }
     const onTouchMove = (e) => {
       for (const t of e.changedTouches) {
         if (t.identifier === lookId) {
-          player.yaw -= (t.clientX - lastX) * 0.005
-          player.pitch -= (t.clientY - lastY) * 0.005
+          const dx = t.clientX - lastX, dy = t.clientY - lastY
+          moved += Math.abs(dx) + Math.abs(dy)
+          player.yaw -= dx * 0.005
+          player.pitch -= dy * 0.005
           player.pitch = Math.max(-1.55, Math.min(1.55, player.pitch))
           lastX = t.clientX; lastY = t.clientY
         }
       }
     }
     const onTouchEnd = (e) => {
-      for (const t of e.changedTouches) if (t.identifier === lookId) lookId = null
+      for (const t of e.changedTouches) {
+        if (t.identifier === lookId) {
+          if (moved < 12 && performance.now() - startT < 250) apiRef.current.doBreak()
+          lookId = null
+        }
+      }
     }
     canvas.addEventListener('touchstart', onTouchStart, { passive: true })
     canvas.addEventListener('touchmove', onTouchMove, { passive: true })

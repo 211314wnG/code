@@ -27,9 +27,9 @@ const FACE_TILES = {
   [COBBLE]: [TILES.COBBLE, TILES.COBBLE, TILES.COBBLE],
 }
 
-export const WORLD_W = 56
-export const WORLD_D = 56
-export const WORLD_H = 28
+export const WORLD_W = 96
+export const WORLD_D = 96
+export const WORLD_H = 38
 
 // Outward-CCW unit-cube faces: dir vector, 4 corner offsets, brightness.
 const FACES = [
@@ -93,8 +93,10 @@ export class World {
   }
 
   heightAt(x, z) {
-    const base = 8
-    const h = base + Math.floor(fbm(x * 0.08 + 10, z * 0.08 + 10) * 9)
+    const base = 10
+    const big = fbm(x * 0.045 + 10, z * 0.045 + 10)
+    const small = fbm(x * 0.13 + 5, z * 0.13 + 5)
+    const h = base + Math.floor(big * 17 + small * 5)
     return Math.max(2, Math.min(WORLD_H - 6, h))
   }
 
@@ -112,7 +114,7 @@ export class World {
     }
     // Scatter a few trees on grass.
     let placed = 0
-    for (let i = 0; i < 400 && placed < 14; i++) {
+    for (let i = 0; i < 2000 && placed < 52; i++) {
       const x = 4 + ((Math.random() * (WORLD_W - 8)) | 0)
       const z = 4 + ((Math.random() * (WORLD_D - 8)) | 0)
       // Keep the spawn column (world centre) clear so the player never drops
@@ -166,7 +168,9 @@ export class World {
               const c = f.c[k]
               positions.push(x + c[0], y + c[1], z + c[2])
               const uvq = UVQ[k]
-              uvs.push(uvq[0] === 0 ? u0 : u1, uvq[1] === 0 ? pad : 1 - pad)
+              // V is flipped so a side texture's top (e.g. the grass lip) lands
+              // on the block's top edge rather than upside-down.
+              uvs.push(uvq[0] === 0 ? u0 : u1, uvq[1] === 0 ? 1 - pad : pad)
               colors.push(f.b, f.b, f.b)
             }
             indices.push(vi, vi + 1, vi + 2, vi, vi + 2, vi + 3)

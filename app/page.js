@@ -18,6 +18,14 @@ const GAMES = [
     desc: '第一人称过山车模拟：俯冲、倾斜急转弯、垂直大回环，重力驱动的速度与实时音效。',
     bg: 'linear-gradient(135deg, #ee5253 0%, #6a2c9c 100%)',
   },
+  {
+    href: '/tetris',
+    title: '俄罗斯方块',
+    subtitle: 'Tetris',
+    emoji: '🧱',
+    desc: '经典俄罗斯方块：旋转、消行、连击得分与等级提速。电脑用方向键，手机有触屏按钮。',
+    bg: 'linear-gradient(135deg, #4dd0e1 0%, #3949ab 100%)',
+  },
 ]
 
 export default function Home() {
