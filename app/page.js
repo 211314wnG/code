@@ -26,6 +26,14 @@ const GAMES = [
     desc: '经典俄罗斯方块：旋转、消行、连击得分与等级提速。电脑用方向键，手机有触屏按钮。',
     bg: 'linear-gradient(135deg, #4dd0e1 0%, #3949ab 100%)',
   },
+  {
+    href: '/cs',
+    title: 'CS 竞技场',
+    subtitle: 'Arena FPS',
+    emoji: '🔫',
+    desc: '第一人称射击：真实士兵模型的人机敌人会包抄、找掩体射击你；开火音效与动画。电脑鼠标键盘，手机触屏。',
+    bg: 'linear-gradient(135deg, #f0883e 0%, #8e2de2 100%)',
+  },
 ]
 
 export default function Home() {
