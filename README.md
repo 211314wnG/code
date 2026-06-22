@@ -1,7 +1,19 @@
-# 🎢 Coaster POV — Three.js Roller Coaster Simulator
+# 🎮 Game Hub — Three.js Games
 
-A first-person roller-coaster point-of-view simulator built with **Three.js**
-inside a **Next.js** project, deployed to **GitHub Pages** via GitHub Actions.
+A small **Next.js** + **Three.js** game hub deployed to **GitHub Pages** via
+GitHub Actions. The landing page (`/`) shows two cards:
+
+- **我的世界 / Voxel Sandbox** (`/minecraft`) — a Minecraft-style voxel world:
+  procedural terrain, trees, mining and building. Desktop uses pointer-lock
+  mouse-look + WASD + space + left/right click; touch devices get an on-screen
+  D-pad, jump, and break/place buttons with drag-to-look. The touch UI hides the
+  moment a key/mouse is used and returns on the next screen touch.
+- **过山车 / Coaster POV** (`/coaster`) — the first-person roller-coaster
+  simulator below.
+
+## 🎢 Coaster POV
+
+A first-person roller-coaster point-of-view simulator built with **Three.js**.
 
 Live circuit features:
 

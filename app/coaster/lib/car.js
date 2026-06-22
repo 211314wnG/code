@@ -13,15 +13,16 @@ export function buildCar() {
   const barMat = new THREE.MeshStandardMaterial({ color: 0xf0c020, metalness: 0.7, roughness: 0.3 })
 
   // Main hull
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.7, 3.2), bodyMat)
-  hull.position.set(0, -1.5, -2.0)
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.6, 2.6), bodyMat)
+  hull.position.set(0, -1.5, -1.7)
   car.add(hull)
 
-  // Tapered nose pointing forward (-Z)
-  const nose = new THREE.Mesh(new THREE.ConeGeometry(1.05, 1.8, 4), bodyMat)
+  // Tapered nose pointing forward (-Z), kept short so it can't poke through
+  // the track ahead on tight curves / loops.
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.95, 1.3, 4), bodyMat)
   nose.rotation.x = -Math.PI / 2
   nose.rotation.y = Math.PI / 4
-  nose.position.set(0, -1.5, -3.6)
+  nose.position.set(0, -1.5, -3.05)
   nose.scale.set(1, 1, 0.6)
   car.add(nose)
 

@@ -89,13 +89,24 @@ export function buildTrackMesh(curve, frames) {
     group.add(tie)
   }
 
-  // Vertical support beams to the ground, where there is room for one.
+  // Vertical support beams to the ground, only where the column below is clear
+  // (so beams never punch through a loop, helix or any lower track section).
+  const tangents = frames.tangents
   const supportEvery = Math.max(1, Math.round(count / 70))
   const beamUp = new THREE.Vector3(0, 1, 0)
+  const columnClear = (p, py) => {
+    for (let j = 0; j <= count; j += 4) {
+      const q = positions[j]
+      if (q.y < py - 2 && Math.hypot(q.x - p.x, q.z - p.z) < 2.2) return false
+    }
+    return true
+  }
   for (let i = 0; i <= count; i += supportEvery) {
     const p = positions[i]
     const height = p.y - TERRAIN_Y
     if (height < 3) continue // too low / underground to bother
+    if (Math.abs(tangents[i].y) > 0.5) continue // steep/inverted (loop) section
+    if (!columnClear(p, p.y)) continue // track passes underneath -> would clip
 
     const beamGeo = new THREE.CylinderGeometry(0.32, 0.45, height, 8)
     const beam = new THREE.Mesh(beamGeo, supportMat)
