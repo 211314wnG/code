@@ -28,7 +28,11 @@ export default function HUD({
               一张竞技地图 + 8 个会主动包抄、寻找掩体射击你的人机敌人(真实士兵模型)。
               消灭他们，注意血量。
             </p>
-            <button style={s.start} onClick={onStart}>▶ 开始战斗</button>
+            <button
+              style={s.start}
+              onClick={onStart}
+              onTouchEnd={(e) => { e.preventDefault(); onStart() }}
+            >▶ 开始战斗</button>
             <p style={s.hint}>
               电脑:点击锁定鼠标 · WASD 移动 · 左键开火 · R 换弹 · 空格跳<br />
               手机:左侧方向键 · 拖动转视角 · 右侧开火/换弹/跳
@@ -90,10 +94,10 @@ const btn = {
 const s = {
   overlay: { position: 'absolute', inset: 0, pointerEvents: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', color: '#eaf2ff' },
   gate: { position: 'absolute', inset: 0, pointerEvents: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at 50% 30%, rgba(20,30,50,0.6), rgba(0,0,0,0.85))' },
-  card: { maxWidth: 460, textAlign: 'center', padding: '2.4rem 2rem', borderRadius: 18, background: 'rgba(12,18,32,0.85)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
+  card: { maxWidth: 460, pointerEvents: 'auto', textAlign: 'center', padding: '2.4rem 2rem', borderRadius: 18, background: 'rgba(12,18,32,0.85)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
   title: { fontSize: '2.2rem', margin: '0 0 0.6rem' },
   sub: { fontSize: '1rem', opacity: 0.85, lineHeight: 1.6, margin: '0 0 1.5rem' },
-  start: { fontSize: '1.1rem', padding: '0.8rem 1.8rem', border: 'none', borderRadius: 999, background: 'linear-gradient(135deg,#f0883e,#e2503f)', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(226,80,63,0.45)' },
+  start: { fontSize: '1.1rem', padding: '0.8rem 1.8rem', border: 'none', borderRadius: 999, background: 'linear-gradient(135deg,#f0883e,#e2503f)', color: '#fff', fontWeight: 800, cursor: 'pointer', pointerEvents: 'auto', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent', boxShadow: '0 8px 24px rgba(226,80,63,0.45)' },
   hint: { fontSize: '0.8rem', opacity: 0.6, marginTop: '1.4rem', lineHeight: 1.7 },
   crosshair: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 14, height: 14 },
   cl: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'rgba(255,255,255,0.9)', boxShadow: '0 0 3px rgba(0,0,0,0.9)' },
