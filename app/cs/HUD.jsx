@@ -89,7 +89,7 @@ const btn = {
 }
 const s = {
   overlay: { position: 'absolute', inset: 0, pointerEvents: 'none', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', color: '#eaf2ff' },
-  gate: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at 50% 30%, rgba(20,30,50,0.6), rgba(0,0,0,0.85))' },
+  gate: { position: 'absolute', inset: 0, pointerEvents: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at 50% 30%, rgba(20,30,50,0.6), rgba(0,0,0,0.85))' },
   card: { maxWidth: 460, textAlign: 'center', padding: '2.4rem 2rem', borderRadius: 18, background: 'rgba(12,18,32,0.85)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
   title: { fontSize: '2.2rem', margin: '0 0 0.6rem' },
   sub: { fontSize: '1rem', opacity: 0.85, lineHeight: 1.6, margin: '0 0 1.5rem' },
